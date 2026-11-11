@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "../tailwind.css";
+
+@theme inline {
+  --font-sans: var(--font-open-sans), "Open Sans", sans-serif;
+  --font-inter: var(--font-inter-face), "Inter", sans-serif;
+}
