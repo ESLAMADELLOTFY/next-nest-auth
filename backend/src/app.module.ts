@@ -1,31 +1,53 @@
+
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config'; // 1. استيراد ConfigModule
+import Joi from 'joi';
+import databaseConfig from './config/database.config.js';
 import { UsersModule } from './users/users.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import jwtConfig from './config/jwt.config.js';
 
 @Module({
   imports: [
-    // 2. تفعيل ConfigModule وجعله متاحاً في كل التطبيق
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [databaseConfig, jwtConfig],
+
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string()
+          .valid('development', 'production', 'test')
+          .default('development'),
+
+        PORT: Joi.number().default(3001),
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.number().default(3306),
+        DB_USERNAME: Joi.string().required(),
+        DB_PASSWORD: Joi.string().allow('').required(),
+        DB_DATABASE: Joi.string().required(),
+      }),
     }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '',
-      database: 'signin_db',
-      autoLoadEntities: true,
-      synchronize: true,
+
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql' as const,
+
+        host: configService.getOrThrow<string>('database.host'),
+        port: configService.getOrThrow<number>('database.port'),
+        username: configService.getOrThrow<string>('database.username'),
+        password: configService.getOrThrow<string>('database.password'),
+        database: configService.getOrThrow<string>('database.database'),
+
+        autoLoadEntities: true,
+
+        synchronize:
+          configService.getOrThrow<string>('NODE_ENV') === 'development',
+      }),
     }),
     UsersModule,
     AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

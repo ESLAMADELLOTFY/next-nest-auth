@@ -50,7 +50,7 @@ export default function Home() {
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
-              href="/login"
+              href="/signin"
               className="font-semibold text-primary transition-colors hover:text-primary-dark hover:underline"
             >
               Login

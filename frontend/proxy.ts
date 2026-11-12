@@ -6,7 +6,7 @@ export function proxy(request: NextRequest) {
   const isAuthenticated = Boolean(token);
 
   if (!isAuthenticated) {
-    const signInUrl = new URL("/login", request.url);
+    const signInUrl = new URL("/signin", request.url);
 
     signInUrl.searchParams.set(
       "callbackUrl",

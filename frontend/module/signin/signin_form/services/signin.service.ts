@@ -18,7 +18,7 @@ export const signInUser = async (
   credentials: SignInCredentials,
 ): Promise<AuthResponse> => {
   const response = await API.post<AuthResponse>(
-    '/auth/login',
+    '/auth/signin',
     credentials,
   );
 

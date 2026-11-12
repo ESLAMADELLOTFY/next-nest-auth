@@ -151,7 +151,7 @@ export default function DashboardPage() {
               </div>
 
               <Link
-                href="/login"
+                href="/signin"
                 className="rounded-lg border border-border px-3 py-2 text-sm font-medium transition-colors hover:bg-surface"
               >
                 <button onClick={logoutUser}>Sign out</button>

@@ -12,10 +12,12 @@ import { AuthService } from './auth.service.js';
 import { RegisterDto } from './dto/register.dto.js';
 import type { Request, Response } from 'express';
 import { SignInDto } from './dto/signin.dto.js';
+import { ConfigService } from '@nestjs/config';
+import { TimeHelper } from '../helpers/time.helper.js';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly configService: ConfigService) {}
 
   @Post('register')
   async register(
@@ -31,8 +33,8 @@ export class AuthController {
     };
   }
 
-  @Post('login')
-  async login(
+  @Post('signin')
+  async signIn(
     @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -74,7 +76,7 @@ export class AuthController {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: AUTH_CONSTANTS.ACCESS_TOKEN_COOKIE_MAX_AGE,
+      maxAge: TimeHelper.parseDurationToMs(this.configService.getOrThrow('jwt.expiresIn')),
     });
   }
 

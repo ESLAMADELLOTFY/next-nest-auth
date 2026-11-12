@@ -1,5 +1,4 @@
 export const AUTH_CONSTANTS = {
-  ACCESS_TOKEN_EXPIRES_IN: '30s',
-  ACCESS_TOKEN_COOKIE_MAX_AGE: 30 * 1000,
   ACCESS_TOKEN_COOKIE_NAME: 'access_token',
 } as const;
+
